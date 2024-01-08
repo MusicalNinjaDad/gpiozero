@@ -10,7 +10,7 @@
 
 import os
 from collections import namedtuple
-from time import time, sleep, monotonic
+from time import sleep, monotonic
 from threading import Thread, Event
 from math import isclose
 from importlib.metadata import entry_points
@@ -24,7 +24,7 @@ from gpiozero import (
     PinInvalidFunction,
     PinInvalidPull,
     PinInvalidBounce
-    )
+)
 from gpiozero.pins.pi import PiPin, PiFactory
 from gpiozero.pins.spi import SPISoftware
 

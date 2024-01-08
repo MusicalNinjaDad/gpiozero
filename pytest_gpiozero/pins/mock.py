@@ -24,9 +24,7 @@ from ..exc import (
     PinInvalidPull,
     PinInvalidBounce,
     )
-from ..devices import Device
-from ..mixins import SharedMixin
-from . import SPI
+from gpiozero import Device, SharedMixin
 from .pi import PiPin, PiFactory
 from .spi import SPISoftware
 

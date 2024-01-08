@@ -12,7 +12,7 @@ from time import sleep
 
 import pytest
 
-from pytest_gpiozero import *
+from gpiozero import Device
 from pytest_gpiozero.pins.mock import *
 
 

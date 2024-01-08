@@ -25,8 +25,8 @@ from gpiozero import (
     PinInvalidPull,
     PinInvalidBounce
     )
-from .pi import PiPin, PiFactory
-from .spi import SPISoftware
+from gpiozero.pins.pi import PiPin, PiFactory
+from gpiozero.pins.spi import SPISoftware
 
 
 PinState = namedtuple('PinState', ('timestamp', 'state'))

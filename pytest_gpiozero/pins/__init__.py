@@ -20,7 +20,7 @@ from collections import defaultdict, namedtuple
 from gpiozero import Device
 
 from .style import Style
-from ..exc import (
+from gpiozero import (
     PinInvalidPin,
     PinInvalidFunction,
     PinSetInput,

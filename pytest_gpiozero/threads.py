@@ -10,7 +10,7 @@
 
 from threading import Thread, Event
 
-from .exc import ZombieThread
+from gpiozero import ZombieThread
 
 
 _THREADS = set()

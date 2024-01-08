@@ -18,22 +18,20 @@ try:
 except ImportError:
     SpiDev = None
 
-from gpiozero import Device
-
-from . import Factory, Pin, BoardInfo, HeaderInfo, PinInfo, data
-from .data import SPI_HARDWARE_PINS
-from ..compat import frozendict
-
-from ..exc import (
+from gpiozero import (
+    Device,
     GPIOPinInUse,
     PinInvalidPin,
     PinNoPins,
     PinNonPhysical,
     PinUnknownPi,
     SPIBadArgs,
-    SPISoftwareFallback,
+    SPISoftwareFallback
 )
 
+from . import Factory, Pin, BoardInfo, HeaderInfo, PinInfo, data
+from .data import SPI_HARDWARE_PINS
+from ..compat import frozendict
 
 def spi_port_device(clock_pin, mosi_pin, miso_pin, select_pin):
     """

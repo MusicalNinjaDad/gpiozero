@@ -18,7 +18,7 @@ from collections import deque
 from statistics import median
 
 from .threads import GPIOThread
-from .exc import (
+from gpiozero import (
     BadEventHandler,
     BadWaitTime,
     BadQueueLen,

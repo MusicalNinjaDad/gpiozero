@@ -15,16 +15,16 @@ from threading import Thread, Event
 from math import isclose
 from importlib.metadata import entry_points
 
-from ..exc import (
+from gpiozero import (
+    Device, SharedMixin,
     PinPWMUnsupported,
     PinSetInput,
     PinFixedPull,
     PinInvalidPin,
     PinInvalidFunction,
     PinInvalidPull,
-    PinInvalidBounce,
+    PinInvalidBounce
     )
-from gpiozero import Device, SharedMixin
 from .pi import PiPin, PiFactory
 from .spi import SPISoftware
 

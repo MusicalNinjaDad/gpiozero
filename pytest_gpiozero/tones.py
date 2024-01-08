@@ -12,7 +12,7 @@ import re
 import warnings
 from math import log2
 
-from .exc import AmbiguousTone
+from gpiozero import AmbiguousTone
 
 
 class Tone(float):

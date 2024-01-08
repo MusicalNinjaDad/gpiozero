@@ -14,7 +14,7 @@ from gpiozero import (
     Device, SharedMixin,
     InputDevice, OutputDevice)
 
-from ..exc import DeviceClosed, SPIInvalidClockMode
+from gpiozero import DeviceClosed, SPIInvalidClockMode
 
 
 class SPISoftware(SPI):

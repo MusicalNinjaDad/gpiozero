@@ -20,6 +20,8 @@ from threading import Event, Lock
 from itertools import tee
 from statistics import median, mean
 
+from gpiozero import GPIODevice, CompositeDevice
+
 from .exc import (
     InputDeviceError,
     DeviceClosed,
@@ -27,7 +29,7 @@ from .exc import (
     PinInvalidState,
     PWMSoftwareFallback,
 )
-from .devices import GPIODevice, CompositeDevice
+
 from .mixins import GPIOQueue, EventsMixin, HoldMixin, event
 try:
     from .pins.pigpio import PiGPIOFactory

@@ -22,13 +22,15 @@ from colorzero import Color
 from collections import OrderedDict
 from math import log2
 
+from gpiozero import GPIODevice, Device, CompositeDevice
+
 from .exc import (
     OutputDeviceBadValue,
     GPIOPinMissing,
     PWMSoftwareFallback,
     DeviceClosed,
 )
-from .devices import GPIODevice, Device, CompositeDevice
+
 from .mixins import SourceMixin
 from .threads import GPIOThread
 from .tones import Tone

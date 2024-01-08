@@ -17,8 +17,9 @@ from itertools import cycle
 from operator import attrgetter
 from collections import defaultdict, namedtuple
 
+from gpiozero import Device
+
 from .style import Style
-from ..devices import Device
 from ..exc import (
     PinInvalidPin,
     PinInvalidFunction,

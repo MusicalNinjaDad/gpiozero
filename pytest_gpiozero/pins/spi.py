@@ -10,9 +10,10 @@ import operator
 from threading import RLock
 
 from . import SPI
-from ..devices import Device, SharedMixin
-from ..input_devices import InputDevice
-from ..output_devices import OutputDevice
+from gpiozero import (
+    Device, SharedMixin,
+    InputDevice, OutputDevice)
+
 from ..exc import DeviceClosed, SPIInvalidClockMode
 
 

@@ -13,7 +13,7 @@ from time import sleep
 import pytest
 
 from gpiozero import Device
-from pytest_gpiozero.pins.mock import *
+from ..pytest_gpiozero.pins.mock import *
 
 
 def test_mock_pin_init(mock_factory):

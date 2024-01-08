@@ -11,8 +11,8 @@ import pytest
 import warnings
 from threading import Event, Thread
 
-from gpiozero import Device
-from gpiozero.pins.mock import MockFactory, MockPWMPin
+from pytest_gpiozero import Device
+from pytest_gpiozero.pins.mock import MockFactory, MockPWMPin
 
 
 # NOTE: Work-around for python versions <3.4: in these versions the

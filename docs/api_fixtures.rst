@@ -18,10 +18,8 @@ They can be imported directly in your test or via your conftest.py either
 individually or all together using:
 
 .. code-block:: python
-    from gpiozero.testing import *
 
-Fixtures
-========
+    from gpiozero.testing import *
 
 .. automodule:: gpiozero.testing.fixtures
     :members:

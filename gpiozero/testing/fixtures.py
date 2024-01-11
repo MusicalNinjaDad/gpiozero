@@ -26,6 +26,8 @@ def mock_factory(request):
 
     .. code-block:: python
 
+        from gpiozero.testing import mock_factory
+        
         test_mockedpin(mock_factory)
             pin16 = mock_factory.pin(16)
             ...

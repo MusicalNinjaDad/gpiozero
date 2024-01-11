@@ -23,3 +23,6 @@ individually or all together using:
 
 .. automodule:: gpiozero.testing.fixtures
     :members:
+
+See :doc:`api_pins` for more details on the behaviour of
+:class:`~gpiozero.pins.mock.MockFactory` 

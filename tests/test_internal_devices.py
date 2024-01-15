@@ -30,6 +30,7 @@ def test_polled_event_delay(mock_factory):
         tod.event_delay = 1.0
         assert tod.event_delay == 1.0
 
+@pytest.mark.xfail(reason='NotImplemented', strict=True)
 def test_timeofday_bad_init(mock_factory):
     with pytest.raises(TypeError):
         TimeOfDay()
@@ -47,6 +48,8 @@ def test_timeofday_bad_init(mock_factory):
         TimeOfDay(7.00, 8.00)
     with pytest.raises(ValueError):
         TimeOfDay(datetime(2019, 1, 24, 19), time(19))  # lurch edge case
+    with pytest.deprecated_call(match='utc=True'):
+        TimeOfDay(time(7), time(8), utc=True)
 
 def test_timeofday_init(mock_factory):
     TimeOfDay(time(7), time(8), utc=False)

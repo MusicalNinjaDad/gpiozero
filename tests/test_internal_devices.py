@@ -30,7 +30,6 @@ def test_polled_event_delay(mock_factory):
         tod.event_delay = 1.0
         assert tod.event_delay == 1.0
 
-@pytest.mark.xfail(reason='NotImplemented', strict=True)
 def test_timeofday_bad_init(mock_factory):
     with pytest.raises(TypeError):
         TimeOfDay()

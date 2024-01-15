@@ -526,8 +526,17 @@ class TimeOfDay(PolledInternalDevice):
         See :doc:`api_pins` for more information (this is an advanced feature
         which most users can ignore).
     """
+
     def __init__(self, start_time, end_time, *, utc=True, event_delay=5.0,
                  pin_factory=None):
+    
+        utc_deprecation_warning = (
+        'Using utc=True is deprecated and scheduled for removal in a future version.'
+        ' Please use tz="UTC" or provide a Timezone-Aware start and end time'
+        )
+        if utc:
+            warnings.warn(utc_deprecation_warning, DeprecationWarning)
+
         self._start_time = None
         self._end_time = None
         self._utc = True

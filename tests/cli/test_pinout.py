@@ -9,7 +9,12 @@ import os
 
 import pytest
 
+import sys
+
 from gpiozerocli.pinout import main
+
+
+python_version = sys.version_info.major + (sys.version_info.minor/100)
 
 
 def test_args_incorrect():

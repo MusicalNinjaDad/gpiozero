@@ -540,7 +540,7 @@ class TimeOfDay(PolledInternalDevice):
         self._start_time = None
         self._end_time = None
 
-        if utc is False:
+        if utc is not None:
             tz = None
 
         super().__init__(event_delay=event_delay, pin_factory=pin_factory)
@@ -595,6 +595,14 @@ class TimeOfDay(PolledInternalDevice):
         a local timezone reading.
         """
         return self._utc
+    
+    @property
+    def tz(self):
+        """
+        The timezone(s) of the start and stop times. :data: None if the times are
+        not timezone aware.
+        """
+        return self._tz
 
     @property
     def value(self):

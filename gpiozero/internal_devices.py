@@ -13,7 +13,7 @@ import os
 import io
 import warnings
 import subprocess
-from datetime import datetime, time
+from datetime import datetime, time, timezone
 
 from .devices import Device
 from .mixins import EventsMixin, event
@@ -527,8 +527,8 @@ class TimeOfDay(PolledInternalDevice):
         which most users can ignore).
     """
 
-    def __init__(self, start_time, end_time, *, utc=True, event_delay=5.0,
-                 pin_factory=None):
+    def __init__(self, start_time, end_time, *, utc=None, event_delay=5.0,
+                 pin_factory=None, tz=timezone.utc):
     
         utc_deprecation_warning = (
         'Using utc=True is deprecated and scheduled for removal in a future version.'
@@ -539,7 +539,8 @@ class TimeOfDay(PolledInternalDevice):
 
         self._start_time = None
         self._end_time = None
-        self._utc = True
+        if utc is None:
+            self._utc = True
         super().__init__(event_delay=event_delay, pin_factory=pin_factory)
         try:
             self._start_time = self._validate_time(start_time)
@@ -547,6 +548,7 @@ class TimeOfDay(PolledInternalDevice):
             if self.start_time == self.end_time:
                 raise ValueError('end_time cannot equal start_time')
             self._utc = utc
+            self._tz = tz
             self._fire_events(self.pin_factory.ticks(), self.is_active)
         except:
             self.close()
@@ -601,7 +603,7 @@ class TimeOfDay(PolledInternalDevice):
         midnight), then this returns :data:`1` when the current time is
         greater than :attr:`start_time` or less than :attr:`end_time`.
         """
-        now = datetime.utcnow().time() if self.utc else datetime.now().time()
+        now = datetime.utcnow().time() if self.utc else datetime.now(tz=self._tz).time()
         if self.start_time < self.end_time:
             return int(self.start_time <= now <= self.end_time)
         else:

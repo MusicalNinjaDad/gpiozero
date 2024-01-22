@@ -19,7 +19,7 @@ from unittest import mock
 import pytest
 
 from gpiozero import *
-from datetime import datetime, time
+from datetime import datetime, time, timezone
 
 file_not_found = IOError(errno.ENOENT, 'File not found')
 bad_ping = CalledProcessError(1, 'returned non-zero exit status 1')
@@ -107,25 +107,27 @@ def test_timeofday_value(mock_factory):
             dt.utcnow.return_value = datetime(2018, 1, 3, 12, 0, 0)
             assert not tod.is_active
 
+def test_TimeOfDay_noTZgiven(mock_factory):
     with TimeOfDay(time(6), time(5)) as tod:
+        utc = timezone.utc
         with mock.patch('gpiozero.internal_devices.datetime') as dt:
-            dt.utcnow.return_value = datetime(2018, 1, 1, 5, 30, 0)
+            dt.now.return_value = datetime(2018, 1, 1, 5, 30, 0, tzinfo=utc)
             assert not tod.is_active
-            dt.utcnow.return_value = datetime(2018, 1, 1, 5, 59, 0)
+            dt.now.return_value = datetime(2018, 1, 1, 5, 59, 0, tzinfo=utc)
             assert not tod.is_active
-            dt.utcnow.return_value = datetime(2018, 1, 1, 6, 0, 0)
+            dt.now.return_value = datetime(2018, 1, 1, 6, 0, 0, tzinfo=utc)
             assert tod.is_active
-            dt.utcnow.return_value = datetime(2018, 1, 1, 18, 0, 0)
+            dt.now.return_value = datetime(2018, 1, 1, 18, 0, 0, tzinfo=utc)
             assert tod.is_active
-            dt.utcnow.return_value = datetime(2018, 1, 1, 5, 0, 0)
+            dt.now.return_value = datetime(2018, 1, 1, 5, 0, 0, tzinfo=utc)
             assert tod.is_active
-            dt.utcnow.return_value = datetime(2018, 1, 2, 5, 1, 0)
+            dt.now.return_value = datetime(2018, 1, 2, 5, 1, 0, tzinfo=utc)
             assert not tod.is_active
-            dt.utcnow.return_value = datetime(2018, 1, 2, 5, 30, 0)
+            dt.now.return_value = datetime(2018, 1, 2, 5, 30, 0, tzinfo=utc)
             assert not tod.is_active
-            dt.utcnow.return_value = datetime(2018, 1, 2, 5, 59, 0)
+            dt.now.return_value = datetime(2018, 1, 2, 5, 59, 0, tzinfo=utc)
             assert not tod.is_active
-            dt.utcnow.return_value = datetime(2018, 1, 2, 6, 0, 0)
+            dt.now.return_value = datetime(2018, 1, 2, 6, 0, 0, tzinfo=utc)
             assert tod.is_active
 
 def test_polled_events(mock_factory):

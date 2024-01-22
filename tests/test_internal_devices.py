@@ -78,36 +78,41 @@ def test_timeofday_value(mock_factory):
             assert not tod.is_active
     assert repr(tod) == '<gpiozero.TimeOfDay object closed>'
 
+def test_TimeOfDay_defaultUTC(mock_factory):
+    utc = timezone.utc
     with TimeOfDay(time(1, 30), time(23, 30)) as tod:
         assert tod.start_time == time(1, 30)
         assert tod.end_time == time(23, 30)
-        assert tod.utc
+        assert not tod.utc
+        assert tod._tz == utc
         with mock.patch('gpiozero.internal_devices.datetime') as dt:
-            dt.utcnow.return_value = datetime(2018, 1, 1, 1, 29, 0)
+            dt.now.return_value = datetime(2018, 1, 1, 1, 29, 0, tzinfo=utc)
             assert not tod.is_active
-            dt.utcnow.return_value = datetime(2018, 1, 1, 1, 30, 0)
+            dt.now.return_value = datetime(2018, 1, 1, 1, 30, 0, tzinfo=utc)
             assert tod.is_active
-            dt.utcnow.return_value = datetime(2018, 1, 1, 12, 30, 0)
+            dt.now.return_value = datetime(2018, 1, 1, 12, 30, 0, tzinfo=utc)
             assert tod.is_active
-            dt.utcnow.return_value = datetime(2018, 1, 1, 23, 30, 0)
+            dt.now.return_value = datetime(2018, 1, 1, 23, 30, 0, tzinfo=utc)
             assert tod.is_active
-            dt.utcnow.return_value = datetime(2018, 1, 1, 23, 31, 0)
+            dt.now.return_value = datetime(2018, 1, 1, 23, 31, 0, tzinfo=utc)
             assert not tod.is_active
 
+def test_TimeOfDay_activeovermidnight1(mock_factory):
+    utc = timezone.utc
     with TimeOfDay(time(23), time(1)) as tod:
         with mock.patch('gpiozero.internal_devices.datetime') as dt:
-            dt.utcnow.return_value = datetime(2018, 1, 1, 22, 59, 0)
+            dt.now.return_value = datetime(2018, 1, 1, 22, 59, 0, tzinfo=utc)
             assert not tod.is_active
-            dt.utcnow.return_value = datetime(2018, 1, 1, 23, 0, 0)
+            dt.now.return_value = datetime(2018, 1, 1, 23, 0, 0, tzinfo=utc)
             assert tod.is_active
-            dt.utcnow.return_value = datetime(2018, 1, 2, 1, 0, 0)
+            dt.now.return_value = datetime(2018, 1, 2, 1, 0, 0, tzinfo=utc)
             assert tod.is_active
-            dt.utcnow.return_value = datetime(2018, 1, 2, 1, 1, 0)
+            dt.now.return_value = datetime(2018, 1, 2, 1, 1, 0, tzinfo=utc)
             assert not tod.is_active
-            dt.utcnow.return_value = datetime(2018, 1, 3, 12, 0, 0)
+            dt.now.return_value = datetime(2018, 1, 3, 12, 0, 0, tzinfo=utc)
             assert not tod.is_active
 
-def test_TimeOfDay_noTZgiven(mock_factory):
+def test_TimeOfDay_activeovermidnight2(mock_factory):
     with TimeOfDay(time(6), time(5)) as tod:
         utc = timezone.utc
         with mock.patch('gpiozero.internal_devices.datetime') as dt:
@@ -131,22 +136,23 @@ def test_TimeOfDay_noTZgiven(mock_factory):
             assert tod.is_active
 
 def test_polled_events(mock_factory):
+    utc = timezone.utc
     with TimeOfDay(time(7), time(8)) as tod:
         tod.event_delay = 0.1
         activated = Event()
         deactivated = Event()
         with mock.patch('gpiozero.internal_devices.datetime') as dt:
-            dt.utcnow.return_value = datetime(2018, 1, 1, 0, 0, 0)
+            dt.now.return_value = datetime(2018, 1, 1, 0, 0, 0, tzinfo=utc)
             tod._fire_events(tod.pin_factory.ticks(), tod.is_active)
             tod.when_activated = activated.set
             tod.when_deactivated = deactivated.set
             assert not activated.wait(0)
             assert not deactivated.wait(0)
-            dt.utcnow.return_value = datetime(2018, 1, 1, 7, 1, 0)
+            dt.now.return_value = datetime(2018, 1, 1, 7, 1, 0, tzinfo=utc)
             assert activated.wait(1)
             activated.clear()
             assert not deactivated.wait(0)
-            dt.utcnow.return_value = datetime(2018, 1, 1, 8, 1, 0)
+            dt.now.return_value = datetime(2018, 1, 1, 8, 1, 0, tzinfo=utc)
             assert deactivated.wait(1)
             assert not activated.wait(0)
             tod.when_activated = None

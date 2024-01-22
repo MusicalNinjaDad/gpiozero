@@ -61,12 +61,13 @@ def test_timeofday_init(mock_factory):
     TimeOfDay(time(18), time(6))
     TimeOfDay(datetime(2019, 1, 24, 19), time(19, 1))  # lurch edge case
 
-def test_timeofday_value(mock_factory):
+def test_TimeOfDay_utcFalse(mock_factory):
     with TimeOfDay(time(7), time(8), utc=False) as tod:
         assert repr(tod).startswith('<gpiozero.TimeOfDay object')
         assert tod.start_time == time(7)
         assert tod.end_time == time(8)
         assert not tod.utc
+        assert tod._tz is None
         with mock.patch('gpiozero.internal_devices.datetime') as dt:
             dt.now.return_value = datetime(2018, 1, 1, 6, 59, 0)
             assert not tod.is_active

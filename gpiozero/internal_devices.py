@@ -539,8 +539,10 @@ class TimeOfDay(PolledInternalDevice):
 
         self._start_time = None
         self._end_time = None
-        if utc is None:
-            self._utc = True
+
+        if utc is False:
+            tz = None
+
         super().__init__(event_delay=event_delay, pin_factory=pin_factory)
         try:
             self._start_time = self._validate_time(start_time)

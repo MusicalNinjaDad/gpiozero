@@ -620,7 +620,7 @@ class TimeOfDay(PolledInternalDevice):
         greater than :attr:`start_time` or less than :attr:`end_time`.
         """
         if self.utc is not None: # Naive implementation
-            now = datetime.utcnow().time() if self.utc else datetime.now().time()
+            now = datetime.utcnow().time() if self.utc else datetime.now(tz=None).time()
             if self.start_time < self.end_time:
                 return int(self.start_time <= now <= self.end_time)
             else:

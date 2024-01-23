@@ -61,8 +61,16 @@ def test_timeofday_init(mock_factory):
     TimeOfDay(time(18), time(6))
     TimeOfDay(datetime(2019, 1, 24, 19), time(19, 1))  # lurch edge case
 
-def test_TimeOfDay_naivelocal(mock_factory):
-    with TimeOfDay(time(7), time(8), utc=False) as tod:
+@pytest.mark.parametrize(
+        'kwargs', [
+                pytest.param({'utc': False}, id='utc-False'),
+                pytest.param({'tz': None}, id='tz-None'),
+                pytest.param({'utc': False, 'tz': None}, id='utc-False,tz-None')
+                ]
+        )
+
+def test_TimeOfDay_naivelocal(mock_factory, kwargs):
+    with TimeOfDay(time(7), time(8), **kwargs) as tod:
         assert repr(tod).startswith('<gpiozero.TimeOfDay object')
         assert tod.start_time == time(7)
         assert tod.end_time == time(8)

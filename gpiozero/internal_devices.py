@@ -519,7 +519,7 @@ class TimeOfDay(PolledInternalDevice):
 
     :type event_delay: float
     :param event_delay:
-        The number of seconds between file reads (defaults to 10 seconds).
+        The number of seconds between file reads (defaults to 5 seconds).
 
     :type pin_factory: Factory or None
     :param pin_factory:

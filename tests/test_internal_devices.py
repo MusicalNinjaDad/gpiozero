@@ -61,7 +61,7 @@ def test_timeofday_init(mock_factory):
     TimeOfDay(time(18), time(6))
     TimeOfDay(datetime(2019, 1, 24, 19), time(19, 1))  # lurch edge case
 
-def test_TimeOfDay_utcFalse(mock_factory):
+def test_TimeOfDay_naivelocal(mock_factory):
     with TimeOfDay(time(7), time(8), utc=False) as tod:
         assert repr(tod).startswith('<gpiozero.TimeOfDay object')
         assert tod.start_time == time(7)
@@ -77,6 +77,7 @@ def test_TimeOfDay_utcFalse(mock_factory):
             assert tod.is_active
             dt.now.return_value = datetime(2018, 1, 2, 8, 1, 0)
             assert not tod.is_active
+            assert all([call.kwargs['tz'] == None for call in dt.mock_calls])
     assert repr(tod) == '<gpiozero.TimeOfDay object closed>'
 
 def test_TimeOfDay_defaultUTC(mock_factory):
@@ -97,6 +98,7 @@ def test_TimeOfDay_defaultUTC(mock_factory):
             assert tod.is_active
             dt.now.return_value = datetime(2018, 1, 1, 23, 31, 0, tzinfo=utc)
             assert not tod.is_active
+            assert all([call.kwargs['tz'] == utc for call in dt.mock_calls])
 
 def test_TimeOfDay_naiveutc(mock_factory):
     with pytest.deprecated_call(match='utc=True'):

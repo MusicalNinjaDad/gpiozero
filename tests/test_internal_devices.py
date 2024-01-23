@@ -122,6 +122,7 @@ def test_TimeOfDay_tzgiven(mock_factory):
     start = time(7, tzinfo=tz_LA)
     end = time(8, tzinfo=tz_LA)
     with TimeOfDay(start, end) as tod:
+        assert tod.aware == True
         assert tod.start_time == start
         assert tod.end_time == end
         assert repr(tod) == '<gpiozero.TimeOfDay object active between 07:00:00 [America/Los_Angeles] and 08:00:00 [America/Los_Angeles]>'

@@ -619,25 +619,25 @@ class TimeOfDay(PolledInternalDevice):
         midnight), then this returns :data:`1` when the current time is
         greater than :attr:`start_time` or less than :attr:`end_time`.
         """
-        if self.utc is not None: # Naive implementation
-            now = datetime.utcnow().time() if self.utc else datetime.now(tz=None).time()
-            if self.start_time < self.end_time:
-                return int(self.start_time <= now <= self.end_time)
-            else:
-                return int(not self.end_time < now < self.start_time)
-        
-        # Timezone aware implementation
+        if self.aware:
             # Beware - most timezone implementations in zoneinfo are only aware for datetime, not time objects
             # Think about DST to understand why ...
-        now = datetime.now(tz=timezone.utc)
-        if self.start_time < self.end_time:
-            started = self.start_time.replace(tzinfo=None) <= now.astimezone(self.start_time.tzinfo).time()
-            ongoing = now.astimezone(self.start_time.tzinfo).time() <= self.end_time.replace(tzinfo=None)
-            return int(started and ongoing)
+            # So we need to get the current offset for each time right now and update the tzinfo
+            now = datetime.now(tz=timezone.utc)
+            start_offset = now.astimezone(self.start_time.tzinfo).utcoffset()
+            end_offset = now.astimezone(self.end_time.tzinfo).utcoffset()
+            now = now.timetz()
+            _start_time = self.start_time.replace(tzinfo=timezone(start_offset))
+            _end_time = self.end_time.replace(tzinfo=timezone(end_offset))
         else:
-            ended = self.end_time.replace(tzinfo=None) < now.astimezone(self.start_time.tzinfo).time()
-            notstarted = now.astimezone(self.start_time.tzinfo).time() < self.start_time.replace(tzinfo=None)
-            return int(not ended and notstarted)
+            now = datetime.utcnow().time() if self.utc else datetime.now(tz=None).time()
+            _start_time = self.start_time
+            _end_time = self.end_time
+
+        if _start_time < _end_time:
+            return int(_start_time <= now <= _end_time)
+        else:
+            return int(not _end_time < now < _start_time)
 
     when_activated = event(
         """

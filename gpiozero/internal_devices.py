@@ -536,7 +536,7 @@ class TimeOfDay(PolledInternalDevice):
     """
 
     def __init__(self, start_time, end_time, *, utc=None, event_delay=5.0,
-                 pin_factory=None, tz=timezone.utc):
+                 pin_factory=None):
     
         utc_deprecation_warning = (
         'Using utc=True is deprecated and scheduled for removal in a future version.'
@@ -545,18 +545,13 @@ class TimeOfDay(PolledInternalDevice):
         if utc:
             warnings.warn(utc_deprecation_warning, DeprecationWarning)
 
+        self.aware = utc is None
+
         self._start_time = None
         self._end_time = None
 
-        if utc is not None:
-            tz = None
-
-        if tz is None and utc is None:
-            utc = False
-
         super().__init__(event_delay=event_delay, pin_factory=pin_factory)
         try:
-            self._tz = tz
             self._start_time = self._validate_time(start_time)
             self._end_time = self._validate_time(end_time)
             if self.start_time == self.end_time:
@@ -568,12 +563,18 @@ class TimeOfDay(PolledInternalDevice):
             raise
 
     def __repr__(self):
+        reprname = f'gpiozero.{self.__class__.__name__} object'
+        if self.aware:
+            reprstart = f'{self.start_time} [{self.start_time.tzinfo}]'
+            reprend = f'{self.end_time} [{self.end_time.tzinfo}]'
+            reprtz = ''
+        else:
+            reprstart = f'{self.start_time}'
+            reprend = f'{self.end_time}'
+            reprtz = f'{(" local", " UTC")[self.utc]}'
         try:
             self._check_open()
-            return (
-                f'<gpiozero.{self.__class__.__name__} object active between '
-                f'{self.start_time} and {self.end_time}'
-                f'{(" local", " UTC")[self.utc] if self.utc is not None else ""}>')
+            return f'<{reprname} active between {reprstart} and {reprend}{reprtz}>'
         except DeviceClosed:
             return super().__repr__()
 
@@ -583,8 +584,8 @@ class TimeOfDay(PolledInternalDevice):
         if not isinstance(value, time):
             raise ValueError(
                 'start_time and end_time must be a datetime, or time instance')
-        if value.tzinfo == None or value.tzinfo.utcoffset(None) == None:
-            value = value.replace(tzinfo=self.tz)
+        if value.tzinfo == None:
+            value = value.replace(tzinfo=timezone.utc)
         return value
 
     @property
@@ -626,11 +627,23 @@ class TimeOfDay(PolledInternalDevice):
         midnight), then this returns :data:`1` when the current time is
         greater than :attr:`start_time` or less than :attr:`end_time`.
         """
-        now = datetime.utcnow().time() if self.utc else datetime.now(tz=self._tz).timetz()
+        if self.utc is not None: # Naive implementation
+            now = datetime.utcnow().time() if self.utc else datetime.now().time()
+            if self.start_time < self.end_time:
+                return int(self.start_time <= now <= self.end_time)
+            else:
+                return int(not self.end_time < now < self.start_time)
+        
+        # Timezone aware implementation
+        now = datetime.now(tz=timezone.utc)
         if self.start_time < self.end_time:
-            return int(self.start_time <= now <= self.end_time)
+            started = self.start_time <= now.astimezone(self.start_time.tzinfo).time()
+            ongoing = now.astimezone(self.start_time.tzinfo).time() <= self.end_time
+            return int(started and ongoing)
         else:
-            return int(not self.end_time < now < self.start_time)
+            ended = self.end_time < now.astimezone(self.start_time.tzinfo).time()
+            notstarted = now.astimezone(self.start_time.tzinfo).time() < self.start_time
+            return int(not ended and notstarted)
 
     when_activated = event(
         """

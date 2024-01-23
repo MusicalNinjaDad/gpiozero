@@ -82,8 +82,8 @@ def test_TimeOfDay_utcFalse(mock_factory):
 def test_TimeOfDay_defaultUTC(mock_factory):
     utc = timezone.utc
     with TimeOfDay(time(1, 30), time(23, 30)) as tod:
-        assert tod.start_time == time(1, 30)
-        assert tod.end_time == time(23, 30)
+        assert tod.start_time == time(1, 30, tzinfo=utc)
+        assert tod.end_time == time(23, 30, tzinfo=utc)
         assert not tod.utc
         assert tod.tz == utc
         with mock.patch('gpiozero.internal_devices.datetime') as dt:

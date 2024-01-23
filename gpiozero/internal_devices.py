@@ -545,12 +545,12 @@ class TimeOfDay(PolledInternalDevice):
 
         super().__init__(event_delay=event_delay, pin_factory=pin_factory)
         try:
+            self._tz = tz
             self._start_time = self._validate_time(start_time)
             self._end_time = self._validate_time(end_time)
             if self.start_time == self.end_time:
                 raise ValueError('end_time cannot equal start_time')
             self._utc = utc
-            self._tz = tz
             self._fire_events(self.pin_factory.ticks(), self.is_active)
         except:
             self.close()
@@ -572,6 +572,8 @@ class TimeOfDay(PolledInternalDevice):
         if not isinstance(value, time):
             raise ValueError(
                 'start_time and end_time must be a datetime, or time instance')
+        if value.tzinfo == None or value.tzinfo.utcoffset(None) == None:
+            value = value.replace(tzinfo=self.tz)
         return value
 
     @property
@@ -613,7 +615,7 @@ class TimeOfDay(PolledInternalDevice):
         midnight), then this returns :data:`1` when the current time is
         greater than :attr:`start_time` or less than :attr:`end_time`.
         """
-        now = datetime.utcnow().time() if self.utc else datetime.now(tz=self._tz).time()
+        now = datetime.utcnow().time() if self.utc else datetime.now(tz=self._tz).timetz()
         if self.start_time < self.end_time:
             return int(self.start_time <= now <= self.end_time)
         else:

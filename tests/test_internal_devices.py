@@ -77,7 +77,7 @@ def test_TimeOfDay_naivelocal(mock_factory):
             assert tod.is_active
             dt.now.return_value = datetime(2018, 1, 2, 8, 1, 0)
             assert not tod.is_active
-            assert all([call.kwargs['tz'] == None for call in dt.mock_calls])
+            assert all([call.kwargs['tz'] == None for call in dt.mock_calls if call[0]=='now'])
     assert repr(tod) == '<gpiozero.TimeOfDay object closed>'
 
 def test_TimeOfDay_defaultUTC(mock_factory):
@@ -98,7 +98,7 @@ def test_TimeOfDay_defaultUTC(mock_factory):
             assert tod.is_active
             dt.now.return_value = datetime(2018, 1, 1, 23, 31, 0, tzinfo=utc)
             assert not tod.is_active
-            assert all([call.kwargs['tz'] == utc for call in dt.mock_calls])
+            assert all([call.kwargs['tz'] == utc for call in dt.mock_calls if call[0]=='now'])
 
 def test_TimeOfDay_naiveutc(mock_factory):
     with pytest.deprecated_call(match='utc=True'):

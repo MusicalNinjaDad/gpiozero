@@ -513,6 +513,14 @@ class TimeOfDay(PolledInternalDevice):
     :param ~datetime.time end_time:
         The time after which the device will be considered inactive.
 
+    Timezone handling: By default start and end times are timezone-aware UTC
+    times. If you wish to specify the time-zone for the start and/or end time
+    you can do so when contructing the time.
+    If you would like to ignore timezones and use "local time" (whatever time
+    your Pi's internal clock says) then set :param bool utc: to :data: `False`.
+    For backwards compatibility you can also select to use naive UTC times by
+    setting :param bool utc: to :data: `True` - this is no longer recommended.
+
     :param bool utc:
         If :data:`True` (the default), a naive UTC time will be used for the
         comparison rather than a local time-zone reading.

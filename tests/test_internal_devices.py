@@ -15,6 +15,7 @@ from posix import statvfs_result
 from subprocess import CalledProcessError
 from threading import Event
 from unittest import mock
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -125,6 +126,15 @@ def test_TimeOfDay_naiveutc(mock_factory):
                 assert tod.is_active
                 dt.utcnow.return_value = datetime(2018, 1, 2, 8, 1, 0)
                 assert not tod.is_active
+
+def test_TimeOfDay_tzgiven(mock_factory):
+    tz_LA = ZoneInfo('America/Los_Angeles')
+    start = time(7, tzinfo=tz_LA)
+    end = time(8, tzinfo=tz_LA)
+    with TimeOfDay(start, end) as tod:
+        assert tod.start_time == start
+        assert tod.end_time == end
+        assert repr(tod) == '<gpiozero.TimeOfDay object active between 07:00:00 [America/Los_Angeles] and 08:00:00 [America/Los_Angeles]>'
 
 def test_TimeOfDay_activeovermidnight1(mock_factory):
     utc = timezone.utc

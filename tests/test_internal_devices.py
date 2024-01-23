@@ -114,7 +114,6 @@ def test_TimeOfDay_naiveutc(mock_factory):
             assert repr(tod) == '<gpiozero.TimeOfDay object active between 07:00:00 and 08:00:00 UTC>'
             assert tod.start_time == time(7, tzinfo=None)
             assert tod.end_time == time(8, tzinfo=None)
-            assert tod.tz == None
             assert tod.utc == True
             with mock.patch('gpiozero.internal_devices.datetime') as dt:
                 dt.utcnow.return_value = datetime(2018, 1, 1, 6, 59, 0)

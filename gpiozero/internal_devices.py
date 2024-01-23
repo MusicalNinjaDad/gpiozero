@@ -584,7 +584,7 @@ class TimeOfDay(PolledInternalDevice):
         if not isinstance(value, time):
             raise ValueError(
                 'start_time and end_time must be a datetime, or time instance')
-        if value.tzinfo == None:
+        if self.aware and value.tzinfo == None:
             value = value.replace(tzinfo=timezone.utc)
         return value
 
@@ -609,14 +609,6 @@ class TimeOfDay(PolledInternalDevice):
         a local timezone reading.
         """
         return self._utc
-    
-    @property
-    def tz(self):
-        """
-        The timezone(s) of the start and stop times. :data: None if the times are
-        not timezone aware.
-        """
-        return self._tz
 
     @property
     def value(self):

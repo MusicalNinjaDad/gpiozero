@@ -543,6 +543,9 @@ class TimeOfDay(PolledInternalDevice):
         if utc is not None:
             tz = None
 
+        if tz is None and utc is None:
+            utc = False
+
         super().__init__(event_delay=event_delay, pin_factory=pin_factory)
         try:
             self._tz = tz
@@ -561,8 +564,8 @@ class TimeOfDay(PolledInternalDevice):
             self._check_open()
             return (
                 f'<gpiozero.{self.__class__.__name__} object active between '
-                f'{self.start_time} and {self.end_time} '
-                f'{("local", "UTC")[self.utc]}>')
+                f'{self.start_time} and {self.end_time}'
+                f'{(" local", " UTC")[self.utc] if self.utc is not None else ""}>')
         except DeviceClosed:
             return super().__repr__()
 

@@ -63,15 +63,14 @@ def test_timeofday_init(mock_factory):
 
 @pytest.mark.parametrize(
         'kwargs', [
-                pytest.param({'utc': False}, id='utc-False'),
-                pytest.param({'tz': None}, id='tz-None'),
-                pytest.param({'utc': False, 'tz': None}, id='utc-False,tz-None')
-                ]
+                  pytest.param({'utc': False}, id='utc-False'),
+                  pytest.param({'tz': None}, id='tz-None'),
+                  pytest.param({'utc': False, 'tz': None}, id='utc-False,tz-None')
+                  ]
         )
-
 def test_TimeOfDay_naivelocal(mock_factory, kwargs):
     with TimeOfDay(time(7), time(8), **kwargs) as tod:
-        assert repr(tod).startswith('<gpiozero.TimeOfDay object')
+        assert repr(tod) == '<gpiozero.TimeOfDay object active between 07:00:00 and 08:00:00 local>'
         assert tod.start_time == time(7)
         assert tod.end_time == time(8)
         assert not tod.utc

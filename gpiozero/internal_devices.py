@@ -565,8 +565,8 @@ class TimeOfDay(PolledInternalDevice):
     def __repr__(self):
         reprname = f'gpiozero.{self.__class__.__name__} object'
         if self.aware:
-            reprstart = f'{self.start_time} [{self.start_time.tzinfo}]'
-            reprend = f'{self.end_time} [{self.end_time.tzinfo}]'
+            reprstart = f'{self.start_time.replace(tzinfo=None)} [{self.start_time.tzinfo}]'
+            reprend = f'{self.end_time.replace(tzinfo=None)} [{self.end_time.tzinfo}]'
             reprtz = ''
         else:
             reprstart = f'{self.start_time}'
@@ -635,14 +635,16 @@ class TimeOfDay(PolledInternalDevice):
                 return int(not self.end_time < now < self.start_time)
         
         # Timezone aware implementation
+            # Beware - most timezone implementations in zoneinfo are only aware for datetime, not time objects
+            # Think about DST to understand why ...
         now = datetime.now(tz=timezone.utc)
         if self.start_time < self.end_time:
-            started = self.start_time <= now.astimezone(self.start_time.tzinfo).time()
-            ongoing = now.astimezone(self.start_time.tzinfo).time() <= self.end_time
+            started = self.start_time.replace(tzinfo=None) <= now.astimezone(self.start_time.tzinfo).time()
+            ongoing = now.astimezone(self.start_time.tzinfo).time() <= self.end_time.replace(tzinfo=None)
             return int(started and ongoing)
         else:
-            ended = self.end_time < now.astimezone(self.start_time.tzinfo).time()
-            notstarted = now.astimezone(self.start_time.tzinfo).time() < self.start_time
+            ended = self.end_time.replace(tzinfo=None) < now.astimezone(self.start_time.tzinfo).time()
+            notstarted = now.astimezone(self.start_time.tzinfo).time() < self.start_time.replace(tzinfo=None)
             return int(not ended and notstarted)
 
     when_activated = event(

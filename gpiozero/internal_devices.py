@@ -547,9 +547,6 @@ class TimeOfDay(PolledInternalDevice):
 
         self.aware = utc is None
 
-        self._start_time = None
-        self._end_time = None
-
         super().__init__(event_delay=event_delay, pin_factory=pin_factory)
         try:
             self._start_time = self._validate_time(start_time)
@@ -579,20 +576,29 @@ class TimeOfDay(PolledInternalDevice):
             return super().__repr__()
 
     def _validate_time(self, value):
-        if hasattr(value, 'timetz'): # anything that can give us a timetz is OK
+        # If we have a datetime or similar we only want the time.
+        # hasattr is faster than try except if we usually expect try to fail - and
+        # we'll probably be getting a time more often than a datetime
+        if hasattr(value, 'timetz'): 
             value = value.timetz()
-        if self.aware:
+        
+        # Using try except to cope with cases where someone has used an object
+        # that offers comparison with time but is not a subclass of time.
+        # Not relying on time's current implementation that checks for timetuple()
+        # as this may change in the future
+        if self.aware:            
             try: # We need to be able to replace tzinfo and compare to aware time
                 value.replace(tzinfo=timezone.utc) < time(1, tzinfo=timezone.utc)
             except (AttributeError, TypeError):
                 raise ValueError(
                 'start_time and end_time must be a datetime, or time instance')
         else:
-            try: # we need to be able to compare to naive time
+            try: # We need to be able to compare to naive time
                 value < time(1)
             except TypeError:
                 raise ValueError(
                 'start_time and end_time must be a datetime, or time instance')
+            
         if self.aware and value.tzinfo == None: # Default to UTC
             value = value.replace(tzinfo=timezone.utc)
         return value
@@ -631,22 +637,22 @@ class TimeOfDay(PolledInternalDevice):
         if self.aware:
             # Beware - most timezone implementations in zoneinfo are only aware for datetime, not time objects
             # Think about DST to understand why ...
-            # So we need to get the current offset for each time right now and update the tzinfo
+            # So we need to get the current offset for each timezone right now and update the tzinfo
             now = datetime.now(tz=timezone.utc)
             start_offset = now.astimezone(self.start_time.tzinfo).utcoffset()
             end_offset = now.astimezone(self.end_time.tzinfo).utcoffset()
-            now = now.timetz()
+            timenow = now.timetz()
             _start_time = self.start_time.replace(tzinfo=timezone(start_offset))
             _end_time = self.end_time.replace(tzinfo=timezone(end_offset))
         else:
-            now = datetime.utcnow().time() if self.utc else datetime.now(tz=None).time()
+            timenow = datetime.utcnow().time() if self.utc else datetime.now(tz=None).time()
             _start_time = self.start_time
             _end_time = self.end_time
 
         if _start_time < _end_time:
-            return int(_start_time <= now <= _end_time)
+            return int(_start_time <= timenow <= _end_time)
         else:
-            return int(not _end_time < now < _start_time)
+            return int(not _end_time < timenow < _start_time)
 
     when_activated = event(
         """

@@ -579,12 +579,21 @@ class TimeOfDay(PolledInternalDevice):
             return super().__repr__()
 
     def _validate_time(self, value):
-        if isinstance(value, datetime):
-            value = value.time()
-        if not isinstance(value, time):
-            raise ValueError(
+        if hasattr(value, 'timetz'): # anything that can give us a timetz is OK
+            value = value.timetz()
+        if self.aware:
+            try: # We need to be able to replace tzinfo and compare to aware time
+                value.replace(tzinfo=timezone.utc) < time(1, tzinfo=timezone.utc)
+            except (AttributeError, TypeError):
+                raise ValueError(
                 'start_time and end_time must be a datetime, or time instance')
-        if self.aware and value.tzinfo == None:
+        else:
+            try: # we need to be able to compare to naive time
+                value < time(1)
+            except TypeError:
+                raise ValueError(
+                'start_time and end_time must be a datetime, or time instance')
+        if self.aware and value.tzinfo == None: # Default to UTC
             value = value.replace(tzinfo=timezone.utc)
         return value
 

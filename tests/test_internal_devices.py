@@ -64,6 +64,12 @@ def test_timeofday_init(mock_factory):
     TimeOfDay(time(18), time(6))
     TimeOfDay(datetime(2019, 1, 24, 19), time(19, 1))  # lurch edge case
 
+def test_TimeOfDay_init_timezone(mock_factory):
+    with TimeOfDay(datetime(2024,2,1,18,00,tzinfo=tz_LA), datetime(2024,2,1,23,00,tzinfo=tz_LA)) as tod:
+        assert tod.start_time == time(18,00,tzinfo=tz_LA)
+        assert tod.end_time == time(23,00,tzinfo=tz_LA)
+        assert tod.aware == True
+
 def test_TimeOfDay_naivelocal(mock_factory):
     with TimeOfDay(time(7), time(8), utc=False) as tod:
         assert repr(tod) == '<gpiozero.TimeOfDay object active between 07:00:00 and 08:00:00 local>'

@@ -25,6 +25,8 @@ from datetime import datetime, time, timezone
 file_not_found = IOError(errno.ENOENT, 'File not found')
 bad_ping = CalledProcessError(1, 'returned non-zero exit status 1')
 
+utc = timezone.utc
+tz_LA = ZoneInfo('America/Los_Angeles')
 
 def test_polled_event_delay(mock_factory):
     with TimeOfDay(time(7), time(8)) as tod:
@@ -118,7 +120,6 @@ def test_TimeOfDay_naiveutc(mock_factory):
                 assert not tod.is_active
 
 def test_TimeOfDay_tzgiven(mock_factory):
-    tz_LA = ZoneInfo('America/Los_Angeles')
     start = time(7, tzinfo=tz_LA)
     end = time(8, tzinfo=tz_LA)
     with TimeOfDay(start, end) as tod:
@@ -126,6 +127,31 @@ def test_TimeOfDay_tzgiven(mock_factory):
         assert tod.start_time == start
         assert tod.end_time == end
         assert repr(tod) == '<gpiozero.TimeOfDay object active between 07:00:00 [America/Los_Angeles] and 08:00:00 [America/Los_Angeles]>'
+        with mock.patch('gpiozero.internal_devices.datetime') as dt:
+            # No DST
+            dt.now.return_value = datetime(2018, 1, 1, 7, 1, 0, tzinfo=utc) # 2017-12-31 23:01 [LA]
+            assert not tod.is_active
+            dt.now.return_value = datetime(2018, 1, 1, 14, 59, 59, tzinfo=utc) # 2018-01-01 06:59:59 [LA]
+            assert not tod.is_active
+            dt.now.return_value = datetime(2018, 1, 1, 15, 0, 0, tzinfo=utc) # 2018-01-01 07:00 [LA]
+            assert tod.is_active
+            dt.now.return_value = datetime(2018, 1, 1, 16, 0, 0, tzinfo=utc) # 2018-01-01 08:00 [LA]
+            assert tod.is_active
+            dt.now.return_value = datetime(2018, 1, 1, 16, 1, 0, tzinfo=utc) # 2018-01-01 08:01 [LA]
+            assert not tod.is_active
+            # DST
+            dt.now.return_value = datetime(2018, 8, 1, 7, 1, 0, tzinfo=utc) # 2018-08-01 00:01 [LA]
+            assert not tod.is_active
+            dt.now.return_value = datetime(2018, 8, 1, 13, 59, 59, tzinfo=utc) # 2018-08-01 06:59:59 [LA]
+            assert not tod.is_active
+            dt.now.return_value = datetime(2018, 8, 1, 14, 0, 0, tzinfo=utc) # 2018-08-01 07:00 [LA]
+            assert tod.is_active
+            dt.now.return_value = datetime(2018, 8, 1, 15, 0, 0, tzinfo=utc) # 2018-08-01 08:00 [LA]
+            assert tod.is_active
+            dt.now.return_value = datetime(2018, 8, 1, 15, 1, 0, tzinfo=utc) # 2018-08-01 08:01 [LA]
+            assert not tod.is_active
+            assert all([call.kwargs['tz'] == utc for call in dt.mock_calls if call[0]=='now'])
+
 
 def test_TimeOfDay_activeovermidnight1(mock_factory):
     utc = timezone.utc

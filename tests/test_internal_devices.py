@@ -111,7 +111,6 @@ def test_TimeOfDay_naivelocal(mock_factory):
     assert repr(tod) == '<gpiozero.TimeOfDay object closed>'
 
 def test_TimeOfDay_defaultUTC(mock_factory):
-    utc = timezone.utc
     with TimeOfDay(time(1, 30), time(23, 30)) as tod:
         assert repr(tod) == '<gpiozero.TimeOfDay object active between 01:30:00 [UTC] and 23:30:00 [UTC]>'
         assert tod.start_time == time(1, 30, tzinfo=utc)
@@ -217,7 +216,6 @@ def test_TimeOfDay_differentTZ(mock_factory):
             assert not tod.is_active
 
 def test_TimeOfDay_activeovermidnight1(mock_factory):
-    utc = timezone.utc
     with TimeOfDay(time(23), time(1)) as tod:
         with mock.patch('gpiozero.internal_devices.datetime') as dt:
             dt.now.return_value = datetime(2018, 1, 1, 22, 59, 0, tzinfo=utc)
@@ -233,7 +231,6 @@ def test_TimeOfDay_activeovermidnight1(mock_factory):
 
 def test_TimeOfDay_activeovermidnight2(mock_factory):
     with TimeOfDay(time(6), time(5)) as tod:
-        utc = timezone.utc
         with mock.patch('gpiozero.internal_devices.datetime') as dt:
             dt.now.return_value = datetime(2018, 1, 1, 5, 30, 0, tzinfo=utc)
             assert not tod.is_active
@@ -255,7 +252,6 @@ def test_TimeOfDay_activeovermidnight2(mock_factory):
             assert tod.is_active
 
 def test_polled_events(mock_factory):
-    utc = timezone.utc
     with TimeOfDay(time(7), time(8)) as tod:
         tod.event_delay = 0.1
         activated = Event()

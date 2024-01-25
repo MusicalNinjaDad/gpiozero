@@ -72,7 +72,16 @@ def test_timeofday_init(mock_factory):
                 time(18,00,tzinfo=tz_LA),
                 time(23,00,tzinfo=tz_LA),
                 True,
-                id="datetime")]
+                id="datetime",
+                ),
+            pytest.param(
+                (time(7, tzinfo=tz_LA), time(8)),
+                time(7,00,tzinfo=tz_LA),
+                time(8, tzinfo=utc),
+                True,
+                id='mixed-default',
+                ),
+            ]
     )
 def test_TimeOfDay_init_timezone(mock_factory, args, start, end, aware):
     with TimeOfDay(*args) as tod:

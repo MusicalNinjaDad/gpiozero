@@ -27,6 +27,7 @@ bad_ping = CalledProcessError(1, 'returned non-zero exit status 1')
 
 utc = timezone.utc
 tz_LA = ZoneInfo('America/Los_Angeles')
+tz_London = ZoneInfo('Europe/London')
 
 def test_polled_event_delay(mock_factory):
     with TimeOfDay(time(7), time(8)) as tod:
@@ -86,7 +87,9 @@ def test_timeofday_init(mock_factory):
 def test_TimeOfDay_init_timezone(mock_factory, args, start, end, aware):
     with TimeOfDay(*args) as tod:
         assert tod.start_time == start
+        assert tod.start_time.tzinfo == start.tzinfo
         assert tod.end_time == end
+        assert tod.end_time.tzinfo == end.tzinfo
         assert tod.aware == aware
 
 def test_TimeOfDay_naivelocal(mock_factory):
@@ -177,6 +180,41 @@ def test_TimeOfDay_tzgiven(mock_factory):
             assert not tod.is_active
             assert all([call.kwargs['tz'] == utc for call in dt.mock_calls if call[0]=='now'])
 
+def test_TimeOfDay_differentTZ(mock_factory):
+    with TimeOfDay(time(8,30,tzinfo=tz_LA), time(18,00,tzinfo=tz_London)) as tod:
+        assert tod.start_time == time(8,30) # LA not aware without date (DST)
+        assert tod.start_time.tzinfo == tz_LA
+        assert tod.end_time == time(18,00) # London not aware without date (DST)
+        assert tod.end_time.tzinfo == tz_London
+        assert tod.aware
+        with mock.patch('gpiozero.internal_devices.datetime') as dt:
+            # No DST
+            dt.now.return_value = datetime(2024,1,25,16,29, tzinfo=utc)
+            assert not tod.is_active
+            dt.now.return_value = datetime(2024,1,25,16,30, tzinfo=utc)
+            assert tod.is_active
+            dt.now.return_value = datetime(2024,1,25,18,00, tzinfo=utc)
+            assert tod.is_active
+            dt.now.return_value = datetime(2024,1,25,18,1, tzinfo=utc)
+            assert not tod.is_active
+            # LA DST
+            dt.now.return_value = datetime(2024,3,10,15,29, tzinfo=utc)
+            assert not tod.is_active
+            dt.now.return_value = datetime(2024,3,10,15,30, tzinfo=utc)
+            assert tod.is_active
+            dt.now.return_value = datetime(2024,3,10,18,00, tzinfo=utc)
+            assert tod.is_active
+            dt.now.return_value = datetime(2024,3,10,18,1, tzinfo=utc)
+            assert not tod.is_active
+            # Both DST
+            dt.now.return_value = datetime(2024,3,31,15,29, tzinfo=utc)
+            assert not tod.is_active
+            dt.now.return_value = datetime(2024,3,31,15,30, tzinfo=utc)
+            assert tod.is_active
+            dt.now.return_value = datetime(2024,3,31,17,00, tzinfo=utc)
+            assert tod.is_active
+            dt.now.return_value = datetime(2024,3,31,17,1, tzinfo=utc)
+            assert not tod.is_active
 
 def test_TimeOfDay_activeovermidnight1(mock_factory):
     utc = timezone.utc

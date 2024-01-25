@@ -546,6 +546,7 @@ class TimeOfDay(PolledInternalDevice):
             warnings.warn(utc_deprecation_warning, DeprecationWarning)
 
         self._aware = utc is None
+        self._utc = utc
 
         super().__init__(event_delay=event_delay, pin_factory=pin_factory)
         try:
@@ -553,7 +554,6 @@ class TimeOfDay(PolledInternalDevice):
             self._end_time = self._validate_time(end_time)
             if self.start_time == self.end_time:
                 raise ValueError('end_time cannot equal start_time')
-            self._utc = utc
             self._fire_events(self.pin_factory.ticks(), self.is_active)
         except:
             self.close()
@@ -577,12 +577,12 @@ class TimeOfDay(PolledInternalDevice):
 
     def _validate_time(self, value):
         # If we have a datetime or similar we only want the time.
-        # hasattr is faster than try except if we usually expect try to fail - and
+        # hasattr is faster than try-except if we usually expect try to fail - and
         # we'll probably be getting a time more often than a datetime
         if hasattr(value, 'timetz'): 
             value = value.timetz()
         
-        # Using try except to cope with cases where someone has used an object
+        # Using try-except to cope with cases where someone has used an object
         # that offers comparison with time but is not a subclass of time.
         # Not relying on time's current implementation that checks for timetuple()
         # as this may change in the future
@@ -642,9 +642,12 @@ class TimeOfDay(PolledInternalDevice):
         greater than :attr:`start_time` or less than :attr:`end_time`.
         """
         if self.aware:
-            # Beware - most timezone implementations in zoneinfo are only aware for datetime, not time objects
+            # Beware - most timezone implementations in zoneinfo are only aware
+            # for datetime, not time objects.
             # Think about DST to understand why ...
-            # So we need to get the current offset for each timezone right now and update the tzinfo
+            # So we need to get the current offset for each timezone right now
+            # and update the tzinfo. Doing it this way means we can keep the
+            # comparison simple and consistent for both aware and naive situations
             now = datetime.now(tz=timezone.utc)
             start_offset = now.astimezone(self.start_time.tzinfo).utcoffset()
             end_offset = now.astimezone(self.end_time.tzinfo).utcoffset()

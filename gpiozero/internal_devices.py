@@ -545,7 +545,7 @@ class TimeOfDay(PolledInternalDevice):
         if utc:
             warnings.warn(utc_deprecation_warning, DeprecationWarning)
 
-        self.aware = utc is None
+        self._aware = utc is None
 
         super().__init__(event_delay=event_delay, pin_factory=pin_factory)
         try:
@@ -624,6 +624,13 @@ class TimeOfDay(PolledInternalDevice):
         a local timezone reading.
         """
         return self._utc
+    
+    @property
+    def aware(self):
+        """
+        Whether the comparison will be performed in a timezone-aware manner
+        """
+        return self._aware
 
     @property
     def value(self):

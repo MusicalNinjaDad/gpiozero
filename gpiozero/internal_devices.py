@@ -586,7 +586,8 @@ class TimeOfDay(PolledInternalDevice):
             try:
                 assert value.tzinfo == None
             except AttributeError:
-                pass
+                True # Want to include this branch in coverage report
+                pass # pass is excluded from coverage in setup.cfg 
             except AssertionError:
                 raise ValueError(
                 'utc must be None if start_time or end_time contain tzinfo')

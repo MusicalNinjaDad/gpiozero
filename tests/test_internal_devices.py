@@ -104,25 +104,35 @@ def test_timeofday_init(mock_factory):
 
 
 @pytest.mark.parametrize(
-        ('args', 'start', 'end', 'aware'),[
+        ('args', 'kwargs', 'start', 'end', 'aware'),[
             pytest.param(
                 (datetime(2024,2,1,18,00,tzinfo=tz_LA), datetime(2024,2,1,23,00,tzinfo=tz_LA)),
+                {},
                 time(18,00,tzinfo=tz_LA),
                 time(23,00,tzinfo=tz_LA),
                 True,
-                id="datetime",
+                id="datetime"
                 ),
             pytest.param(
                 (time(7, tzinfo=tz_LA), time(8)),
+                {},
                 time(7,00,tzinfo=tz_LA),
                 time(8, tzinfo=utc),
                 True,
-                id='mixed-default',
+                id='mixed-default'
+                ),
+            pytest.param(
+                (time(7, tzinfo=None), time(8, tzinfo=None)),
+                {'utc':False},
+                time(7),
+                time(8),
+                False,
+                id='local-tzinfoexplicityNone'
                 ),
             ]
     )
-def test_TimeOfDay_init_timezone(mock_factory, args, start, end, aware):
-    with TimeOfDay(*args) as tod:
+def test_TimeOfDay_init_timezone(mock_factory, args, kwargs, start, end, aware):
+    with TimeOfDay(*args, **kwargs) as tod:
         assert tod.start_time == start
         assert tod.start_time.tzinfo == start.tzinfo
         assert tod.end_time == end

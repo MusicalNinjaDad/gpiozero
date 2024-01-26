@@ -490,7 +490,7 @@ class TimeOfDay(PolledInternalDevice):
     instances.
 
     The following example turns on a lamp attached to an :class:`Energenie`
-    plug between 07:00AM and 08:00AM::
+    plug between 07:00AM and 08:00AM UTC::
 
         from gpiozero import TimeOfDay, Energenie
         from datetime import time
@@ -515,11 +515,33 @@ class TimeOfDay(PolledInternalDevice):
 
     Timezone handling: By default start and end times are timezone-aware UTC
     times. If you wish to specify the time-zone for the start and/or end time
-    you can do so when contructing the time.
+    you can do so when contructing the time, for example to switch on during
+    office hours in both London and Los Angeles::
+
+        from gpiozero import TimeOfDay,
+        from datetime import time,
+        from zoneinfo import ZoneInfo
+
+        tz_LA = ZoneInfo('America/Los_Angeles')
+        tz_London = ZoneInfo('Europe/London')
+
+        officehours = TimeOfDay(time(8,30,tzinfo=tz_LA), time(18,00,tzinfo=tz_London))
+
     If you would like to ignore timezones and use "local time" (whatever time
-    your Pi's internal clock says) then set :param bool utc: to :data: `False`.
-    For backwards compatibility you can also select to use naive UTC times by
-    setting :param bool utc: to :data: `True` - this is no longer recommended.
+    your Pi's internal clock says) then set :param bool utc: to :data: `False`. To
+    switch on during whatever your Pi thinks are local office hours::
+        
+        from gpiozero import TimeOfDay,
+        from datetime import time
+
+        officehours = TimeOfDay(time(8,30), time(18,00), utc=False)
+
+    .. note::
+        For backwards compatibility you can also select to use naive UTC times by
+        setting :param bool utc: to :data: `True` - this is no longer recommended,
+        instead you should leave :param bool: utc set to :data: `None` or explicity
+        specify ``tzinfo=UTC`` (``from datetime import UTC``) - both will give the
+        same result. 
 
     :param bool utc:
         If :data:`True` (the default), a naive UTC time will be used for the

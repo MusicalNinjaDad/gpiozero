@@ -104,6 +104,7 @@ def test_timeofday_init(mock_factory):
     TimeOfDay(time(6), time(18))
     TimeOfDay(time(18), time(6))
     TimeOfDay(datetime(2019, 1, 24, 19), time(19, 1))  # lurch edge case
+    TimeOfDay(time(8,30), time(18,00), utc=False) # Documented example
 
 
 @pytest.mark.parametrize(

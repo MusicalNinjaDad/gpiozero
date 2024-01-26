@@ -582,6 +582,15 @@ class TimeOfDay(PolledInternalDevice):
         if hasattr(value, 'timetz'): 
             value = value.timetz()
         
+        if not self.aware:
+            try:
+                assert value.tzinfo == None
+            except AttributeError:
+                pass
+            except AssertionError:
+                raise ValueError(
+                'utc must be None if start_time or end_time contain tzinfo')
+
         # Using try-except to cope with cases where someone has used an object
         # that offers comparison with time but is not a subclass of time.
         # Not relying on time's current implementation that checks for timetuple()

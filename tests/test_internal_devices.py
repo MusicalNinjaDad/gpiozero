@@ -54,6 +54,43 @@ def test_timeofday_bad_init(mock_factory):
     with pytest.deprecated_call(match='utc=True'):
         TimeOfDay(time(7), time(8), utc=True)
 
+@pytest.mark.parametrize(
+        'args',[
+            pytest.param(
+                (time(7, tzinfo=utc), time(8)),
+                id="startaware"
+                ),
+            pytest.param(
+                (time(7), time(8,tzinfo=utc)),
+                id='endaware'
+                ),
+            pytest.param(
+                (time(7, tzinfo=tz_LA), time(8)),
+                id='startZoneInfo'
+                ),
+            pytest.param(
+                (time(7), time(8,tzinfo=tz_LA)),
+                id='endZoneInfo'
+                ),
+            ]
+        )
+@pytest.mark.parametrize(
+        'kwargs',[
+            pytest.param(
+                {'utc':True},
+                id="utcTrue"
+                ),
+            pytest.param(
+                {'utc': False},
+                id='utcFalse'
+                ),
+            ]
+        )
+def test_TimeOfDay_timezoneawaremismatch(mock_factory, args, kwargs):
+    errormessage = 'utc must be None if start_time or end_time contain tzinfo'
+    with pytest.raises(ValueError, match=errormessage):
+        TimeOfDay(*args, **kwargs)
+
 def test_timeofday_init(mock_factory):
     TimeOfDay(time(7), time(8), utc=False)
     TimeOfDay(time(7), time(8), utc=True)

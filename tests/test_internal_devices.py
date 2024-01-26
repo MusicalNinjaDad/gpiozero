@@ -53,6 +53,9 @@ def test_timeofday_bad_init(mock_factory):
         TimeOfDay(datetime(2019, 1, 24, 19), time(19))  # lurch edge case
     with pytest.deprecated_call(match='utc=True'):
         TimeOfDay(time(7), time(8), utc=True)
+    with pytest.raises(ValueError,
+            match = 'start_time and end_time must be a datetime, or time instance'):
+        TimeOfDay('7:00', '8:00', utc=True) # edge case
 
 @pytest.mark.parametrize(
         'args',[

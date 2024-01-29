@@ -6,23 +6,12 @@ COPY <<EOF /etc/apt/sources.list.d/testing.list
 deb http://deb.debian.org/debian testing main
 EOF
 
-# # ---
-# # Prefer stable versions
-# COPY <<EOF /etc/apt/preferences
-# Package: *
-# Pin: release a=stable
-# Pin-Priority: 700
-
-# Package: *
-# Pin: release a=testing
-# Pin-Priority: 650
-# EOF
-
 # ---
 # Install Python 3.12
 RUN apt update \
 && apt install -y --no-install-recommends python3.12-full python3-pip \
-&& rm -rf /var/lib/apt/lists/*
+&& rm -rf /var/lib/apt/lists/* \
+&& rm /etc/apt/sources.list.d/testing.list
 
 # ---
 # Install tools needed for building docs

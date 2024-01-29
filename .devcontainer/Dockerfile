@@ -30,4 +30,10 @@ RUN apt update \
 && apt install -y --no-install-recommends \
     graphviz \
     inkscape \
+    latexmk \
+    texlive-fonts-recommended \
+    texlive-latex-recommended \
+    texlive-latex-extra \
+    texlive-xetex \
+    xindy \
 && rm -rf /var/lib/apt/lists/*

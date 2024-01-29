@@ -489,6 +489,9 @@ class TimeOfDay(PolledInternalDevice):
     *start_time* and *end_time* (inclusive) which are :class:`~datetime.time`
     instances.
 
+    Note that *start_time* may be greater than *end_time*, indicating a time
+    period which crosses midnight.
+
     The following example turns on a lamp attached to an :class:`Energenie`
     plug between 07:00AM and 08:00AM UTC::
 
@@ -504,19 +507,10 @@ class TimeOfDay(PolledInternalDevice):
 
         pause()
 
-    Note that *start_time* may be greater than *end_time*, indicating a time
-    period which crosses midnight.
-
-    :param ~datetime.time start_time:
-        The time from which the device will be considered active.
-
-    :param ~datetime.time end_time:
-        The time after which the device will be considered inactive.
-
-    Timezone handling: By default start and end times are timezone-aware UTC
-    times. If you wish to specify the time-zone for the start and/or end time
-    you can do so when contructing the time, for example to switch on during
-    office hours in both London and Los Angeles::
+    By default start and end times are timezone-aware UTC times. If you wish to
+    specify the time-zone for the start and/or end time you can do so when 
+    contructing the time, for example to switch on when it is office hours in 
+    both London and Los Angeles::
 
         from gpiozero import TimeOfDay,
         from datetime import time,
@@ -528,7 +522,7 @@ class TimeOfDay(PolledInternalDevice):
         officehours = TimeOfDay(time(8,30,tzinfo=tz_LA), time(18,00,tzinfo=tz_London))
 
     If you would like to ignore timezones and use "local time" (whatever time
-    your Pi's internal clock says) then set :param bool utc: to :data: `False`. To
+    your Pi's internal clock says) then set `utc` to `False`. To
     switch on during whatever your Pi thinks are local office hours::
         
         from gpiozero import TimeOfDay,
@@ -538,14 +532,22 @@ class TimeOfDay(PolledInternalDevice):
 
     .. note::
         For backwards compatibility you can also select to use naive UTC times by
-        setting :param bool utc: to :data: `True` - this is no longer recommended,
-        instead you should leave :param bool: utc set to :data: `None` or explicity
-        specify ``tzinfo=UTC`` (``from datetime import UTC``) - both will give the
+        setting `utc` to `True` - this is no longer recommended,
+        instead you should leave `utc` set to `None` or explicity
+        specify `tzinfo=UTC` (`from datetime import UTC`) - both will give the
         same result. 
 
+    :param ~datetime.time start_time:
+        The time from which the device will be considered active.
+
+    :param ~datetime.time end_time:
+        The time after which the device will be considered inactive.
+
     :param bool utc:
-        If :data:`True` (the default), a naive UTC time will be used for the
-        comparison rather than a local time-zone reading.
+        If `None` (the default), UTC time will be used for the comparison. 
+        If `False` the local clock time will be use, ignoring the timezone. 
+        (If `True` a naive UTC time will be used - this is not recommended, 
+        see the note above)
 
     :type event_delay: float
     :param event_delay:
@@ -652,8 +654,10 @@ class TimeOfDay(PolledInternalDevice):
     @property
     def utc(self):
         """
-        If :data:`True`, use a naive UTC time reading for comparison instead of
-        a local timezone reading.
+        If `None` (the default), UTC time will be used for the comparison. 
+        If `False` the local clock time will be use, ignoring the timezone. 
+        (If `True` a naive UTC time will be used - this is not recommended, 
+        see the note above)
         """
         return self._utc
     

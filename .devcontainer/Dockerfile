@@ -1,6 +1,3 @@
-# bookworm - 3.11
-# bullseye - 3.9
-# buster - 3.7
 ARG DEBIAN=debian
 FROM mcr.microsoft.com/devcontainers/base:${DEBIAN}
 ARG PYVERSION=3
@@ -14,7 +11,11 @@ EOF
 # ---
 # Install Python
 RUN apt update \
-&& apt install -y --no-install-recommends python$PYVERSION-full python3-pip \
+&& apt install -y --no-install-recommends \
+    python$PYVERSION \
+    python$PYVERSION-distutils \
+    python$PYVERSION-venv \
+    python3-pip \
 && rm -rf /var/lib/apt/lists/* \
 && rm /etc/apt/sources.list.d/testing.list \
 && ln -s /usr/bin/python$PYVERSION /usr/bin/py

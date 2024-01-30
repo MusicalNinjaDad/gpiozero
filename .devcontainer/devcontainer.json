@@ -1,6 +1,15 @@
 {
     "name": "gpiozero",
-    "build": {"dockerfile": "Dockerfile"},
+    "build": {
+        "dockerfile": "Dockerfile",
+        "args": {
+            //"PYVERSION": "3.12",
+            "DEBIAN": "bookworm"
+            // bookworm - 3.11
+            // bullseye - 3.9
+            // buster - 3.7
+        }    
+    },
 
     "customizations": {
         "vscode": {

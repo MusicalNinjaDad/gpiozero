@@ -1,4 +1,9 @@
-FROM mcr.microsoft.com/devcontainers/base:debian
+# bookworm - 3.11
+# bullseye - 3.9
+# buster - 3.7
+ARG DEBIAN=debian
+FROM mcr.microsoft.com/devcontainers/base:${DEBIAN}
+ARG PYVERSION=3
 
 # ---
 # Add testing repo to get latest versions of tools
@@ -7,11 +12,12 @@ deb http://deb.debian.org/debian testing main
 EOF
 
 # ---
-# Install Python 3.12
+# Install Python
 RUN apt update \
-&& apt install -y --no-install-recommends python3.12-full python3-pip \
+&& apt install -y --no-install-recommends python$PYVERSION-full python3-pip \
 && rm -rf /var/lib/apt/lists/* \
-&& rm /etc/apt/sources.list.d/testing.list
+&& rm /etc/apt/sources.list.d/testing.list \
+&& ln -s /usr/bin/python$PYVERSION /usr/bin/py
 
 # ---
 # Install tools needed for building docs

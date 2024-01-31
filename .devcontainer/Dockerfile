@@ -1,23 +1,24 @@
 ARG DEBIAN=debian
-FROM mcr.microsoft.com/devcontainers/base:${DEBIAN}
+FROM debian:${DEBIAN}
 ARG PYVERSION=3
-
-# ---
-# Add testing repo to get latest versions of tools
-COPY <<EOF /etc/apt/sources.list.d/testing.list
-deb http://deb.debian.org/debian testing main
-EOF
 
 # ---
 # Install Python
 RUN apt update \
 && apt install -y --no-install-recommends \
-    python$PYVERSION \
-    python$PYVERSION-distutils \
-    python$PYVERSION-venv \
-    python3-pip \
-&& rm -rf /var/lib/apt/lists/* \
-&& rm /etc/apt/sources.list.d/testing.list \
+    ca-certificates \
+    git \
+&& if [ $PYVERSION -eq 3 ] \
+    ; then \
+        apt install -y --no-install-recommends \
+            python$PYVERSION \
+            python$PYVERSION-distutils \
+            python3-pip \
+            python$PYVERSION-venv \
+        && rm -rf /var/lib/apt/lists/* \
+    ; else \
+        echo "Install from Source" \
+; fi \
 && ln -s /usr/bin/python$PYVERSION /usr/bin/py
 
 # ---

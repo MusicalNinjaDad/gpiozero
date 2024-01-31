@@ -3,8 +3,10 @@
     "build": {
         "dockerfile": "Dockerfile",
         "args": {
-            "PYVERSION": "3.12",
-            "DEBIAN": "bookworm"
+            // PYVERSION 3 (default) will be obtained via apt
+            // Setting specific PYVERSION (not 3) will build from source
+            "PYVERSION": "3",
+            "DEBIAN": "bullseye"
             // bookworm - 3.11
             // bullseye - 3.9
             // buster - 3.7

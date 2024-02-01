@@ -6,8 +6,8 @@
             // PYVERSION 3 (default) will be obtained via apt
             // Setting specific PYVERSION (not 3) will build from source
             // "PYVERSION": "3.12",
-            // "DEBIAN": "bookworm" // 3.11
-            "DEBIAN": "bullseye" // 3.9
+            "DEBIAN": "bookworm" // 3.11
+            // "DEBIAN": "bullseye" // 3.9
             // "DEBIAN": "buster" // 3.7
         }    
     },

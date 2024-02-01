@@ -80,3 +80,5 @@ RUN apt update \
     texlive-xetex \
     xindy \
 && rm -rf /var/lib/apt/lists/*
+
+USER $USERNAME

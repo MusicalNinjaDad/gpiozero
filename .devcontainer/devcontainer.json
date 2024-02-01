@@ -19,7 +19,12 @@
                 "ms-python.vscode-pylance"
             ],
             "settings": {
-                "python.defaultInterpreterPath": ".devcontainer/.venv/bin/python3"
+                "python.defaultInterpreterPath": ".devcontainer/.venv/bin/python3",
+                "terminal.integrated.defaultProfile.linux": "bash", 
+                "terminal.integrated.profiles.linux": {
+                    "bash": {
+                        "path": "/usr/bin/bash"
+                    }
             }
         }
     },

@@ -48,9 +48,10 @@ RUN if [ $PYVERSION -eq 3 ] \
         && cd /opt \
         && git clone --branch $PYVERSION --single-branch https://github.com/python/cpython \
         && cd cpython \
-        && ./configure \
+        && ./configure --prefix=/usr\
         && make -j \
-        && ln -s /opt/cpython/python /usr/bin/py \
+        && make altinstall \
+        && ln -s /usr/bin/python$PYVERSION /usr/bin/py \
 ; fi
 
 

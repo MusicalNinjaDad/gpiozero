@@ -3,23 +3,56 @@ FROM debian:${DEBIAN}
 ARG PYVERSION=3
 
 # ---
-# Install Python
+# Install basic dev tools
 RUN apt update \
 && apt install -y --no-install-recommends \
     ca-certificates \
     git \
-&& if [ $PYVERSION -eq 3 ] \
+    make \
+&& rm -rf /var/lib/apt/lists/*
+
+# ---
+# Install python
+RUN if [ $PYVERSION -eq 3 ] \
     ; then \
-        apt install -y --no-install-recommends \
-            python$PYVERSION \
-            python$PYVERSION-distutils \
+        apt update \
+        && apt install -y --no-install-recommends \
+            python3 \
+            python3-distutils \
             python3-pip \
-            python$PYVERSION-venv \
+            python3-venv \
         && rm -rf /var/lib/apt/lists/* \
+        && ln -s /usr/bin/python3 /usr/bin/py \
     ; else \
-        echo "Install from Source" \
-; fi \
-&& ln -s /usr/bin/python$PYVERSION /usr/bin/py
+        echo "Install from source" \
+        && apt update \
+        && apt install -y --no-install-recommends \
+            build-essential \
+            gdb \
+            lcov \
+            libbz2-dev \
+            libffi-dev \
+            libgdbm-dev \
+            libgdbm-compat-dev \
+            liblzma-dev \
+            libncurses5-dev \
+            libreadline6-dev \
+            libsqlite3-dev \
+            libssl-dev \
+            lzma lzma-dev \
+            pkg-config \
+            tk-dev \
+            uuid-dev \
+            zlib1g-dev \
+        && rm -rf /var/lib/apt/lists/* \
+        && cd /opt \
+        && git clone --branch $PYVERSION --single-branch https://github.com/python/cpython \
+        && cd cpython \
+        && ./configure \
+        && make -j \
+        && ln -s /opt/cpython/python /usr/bin/py \
+; fi
+
 
 # ---
 # Install tools needed for building docs

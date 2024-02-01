@@ -13,7 +13,6 @@ from collections import namedtuple
 from time import time, sleep, monotonic
 from threading import Thread, Event
 from math import isclose
-from importlib.metadata import entry_points
 
 from gpiozero.ep import MockPinClass_entry_points
 

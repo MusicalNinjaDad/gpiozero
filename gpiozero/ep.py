@@ -8,8 +8,10 @@ Provides access to the gpiozero entry points:
         ...
 
 """
-
-from importlib.metadata import entry_points
+try:
+    from importlib.metadata import entry_points
+except ModuleNotFoundError:
+    from importlib_metadata import entry_points
 
 #prefix _ will stop this being imported via from ep import * if anyone tries
 def _get_entry_points(group): 

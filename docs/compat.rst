@@ -13,9 +13,10 @@ Backwards Compatibility
 
 We aim to ensure that gpiozero will run on all versions of python included in releases
 of debian which are under full support from debian.org. At the moment this means python3.7
-(debian-buster), 3.9 (bullseye) & 3.11 (bookworm). We will make a reasonable best effort not
-to break compatibility with older python 3.x versions and to provide support for higher
-versions not bundled in the latest stable debian release.
+(debian-buster), 3.9 (bullseye) & 3.11 (bookworm). While we will make a reasonable best
+effort not to break compatibility with older python 3.x versions and to provide support for
+higher versions not bundled in the latest stable debian release, python 3.7 is currently the
+lowest version supported.
 
 GPIO Zero 2.x is a new major version and thus backwards incompatible changes
 can be expected. We have attempted to keep these as minimal as reasonably

@@ -20,6 +20,8 @@ RUN apt update \
 && apt install -y --no-install-recommends \
     ca-certificates \
     git \
+    locales \
+    locales-all \
     make \
 && rm -rf /var/lib/apt/lists/*
 

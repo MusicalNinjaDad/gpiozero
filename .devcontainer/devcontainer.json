@@ -22,6 +22,7 @@
             ],
             "settings": {
                 "python.defaultInterpreterPath": ".devcontainer/.venv/bin/python3",
+                "python.testing.pytestEnabled": true,
                 "terminal.integrated.defaultProfile.linux": "bash", 
                 "terminal.integrated.profiles.linux": {
                     "bash": {
@@ -33,5 +34,6 @@
     },
 
     "postCreateCommand": ".devcontainer/postcreate.sh",
+    "postStartCommand": "nohup bash -c '. .devcontainer/.venv/bin/activate && make preview &'",
     "postAttachCommand": ". .devcontainer/.venv/bin/activate"
 }

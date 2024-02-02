@@ -24,3 +24,6 @@ coverage
 .cache
 .pytest_cache
 .mypy_cache
+
+# Background docs preview
+nohup.out

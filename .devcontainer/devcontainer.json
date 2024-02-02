@@ -27,6 +27,7 @@
                     "bash": {
                         "path": "/usr/bin/bash"
                     }
+                }
             }
         }
     },

@@ -9,8 +9,10 @@
             "DEBIAN": "bookworm" // 3.11
             // "DEBIAN": "bullseye" // 3.9
             // "DEBIAN": "buster" // 3.7
-        }    
+        }
     },
+
+    "forwardPorts": [8000],
 
     "customizations": {
         "vscode": {

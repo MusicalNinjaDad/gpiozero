@@ -3,7 +3,13 @@
 
 name: Python package
 
-on: [push, pull_request]
+on: 
+  push:
+      paths: 
+        - '**.py'
+        - '.github/workflows/test.yml'
+        - 'setup.*'
+  pull_request:
 
 jobs:
   test:

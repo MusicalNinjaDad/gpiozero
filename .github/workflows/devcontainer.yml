@@ -8,8 +8,13 @@ jobs:
       matrix:
         include:
           - debian: buster
+            python: 3
           - debian: bullseye
+            python: 3
           - debian: bookworm
+            python: 3
+          - debian: bookworm
+            python: 3.12
 
     runs-on: ubuntu-latest
         
@@ -25,4 +30,5 @@ jobs:
         push: false
         build-args:
           DEBIAN=${{ matrix.debian }}
-        tags: musicalninjarandint/gpiozero-devcontainer:${{ matrix.debian }}
+          PYTHON=${{ matrix.python }}
+        tags: musicalninjarandint/gpiozero-devcontainer:${{ matrix.debian }}-${{ matrix.python }}

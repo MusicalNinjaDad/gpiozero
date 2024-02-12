@@ -1,0 +1,31 @@
+name: Build and publish Docker images for devcontainer
+
+on: 
+  push:
+    paths: [Dockerfile, devcontainer.yml]
+
+jobs:
+  build-and-publish:
+    strategy:
+      matrix:
+        include:
+          - debian: buster
+            python: 3
+          - debian: bullseye
+            python: 3
+          - debian: bookworm
+            python: 3
+          - debian: bookworm
+            python: 3.12
+
+    runs-on: ubuntu-latest
+        
+    steps:
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Build and push
+      uses: docker/build-push-action@v5
+      with:
+        context: "{{defaultContext}}:.devcontainer"
+        push: false
+        tags: MusicalNinjaRandInt/grpiozero-devcontainer:${{ matrix.debian }}-${{ matrix.python }}

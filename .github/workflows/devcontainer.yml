@@ -1,8 +1,6 @@
 name: Build and publish Docker images for devcontainer
 
-on: 
-  push:
-    paths: [Dockerfile, devcontainer.yml]
+on: push
 
 jobs:
   build-and-publish:

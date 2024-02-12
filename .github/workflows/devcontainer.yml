@@ -25,4 +25,4 @@ jobs:
         push: false
         build-args:
           DEBIAN=${{ matrix.debian }}
-        tags: MusicalNinjaRandInt/gpiozero-devcontainer:${{ matrix.debian }}
+        tags: musicalninjarandint/gpiozero-devcontainer:${{ matrix.debian }}

@@ -28,7 +28,7 @@ jobs:
       with:
         context: .devcontainer
         push: false
-        build-args:
+        build-args: |
           DEBIAN=${{ matrix.debian }}
           PYTHON=${{ matrix.python }}
         tags: musicalninjarandint/gpiozero-devcontainer:${{ matrix.debian }}-${{ matrix.python }}

@@ -46,4 +46,4 @@ jobs:
         build-args: |
           DEBIAN=${{ matrix.debian }}
           PYTHON=${{ matrix.python }}
-        tags: musicalninjarandint/gpiozero-devcontainer:${{ matrix.debian }}-${{ matrix.python }}
+        tags: ghcr.io/musicalninjarandint/gpiozero-devcontainer:${{ matrix.debian }}-${{ matrix.python }}

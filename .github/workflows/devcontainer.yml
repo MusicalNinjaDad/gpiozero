@@ -32,6 +32,8 @@ jobs:
       with:
         context: .devcontainer
         push: false
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
         build-args: |
           DEBIAN=${{ matrix.debian }}
           PYTHON=${{ matrix.python }}

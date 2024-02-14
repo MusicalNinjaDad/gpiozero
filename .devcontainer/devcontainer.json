@@ -1,5 +1,8 @@
 {
     "image": "ghcr.io/musicalninjarandint/gpiozero-devcontainer:bookworm-3",
+    // "image": "ghcr.io/musicalninjarandint/gpiozero-devcontainer:bullseye-3",
+    // "image": "ghcr.io/musicalninjarandint/gpiozero-devcontainer:buster-3",
+    // "image": "ghcr.io/musicalninjarandint/gpiozero-devcontainer:bookworm-3.12",
 
     "forwardPorts": [8000],
 

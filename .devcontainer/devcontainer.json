@@ -26,6 +26,6 @@
     },
 
     "postCreateCommand": ".devcontainer/postcreate.sh",
-    "postStartCommand": "nohup bash -c '. .devcontainer/.venv/bin/activate && make preview &'",
+    "postStartCommand": "nohup bash -c '. .devcontainer/.venv/bin/activate && make preview &' >> .devcontainer/preview.out 2>> .devcontainer/preview.err",
     "postAttachCommand": ". .devcontainer/.venv/bin/activate"
 }

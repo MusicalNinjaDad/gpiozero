@@ -7,5 +7,3 @@ echo "Make gpiozero develop"
 make develop
 echo "Make docs clean"
 make -C docs clean
-echo "Make html docs"
-make -C docs html
